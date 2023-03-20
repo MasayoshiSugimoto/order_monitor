@@ -9,8 +9,8 @@ from .order_cancel_replace import OrderCancelReplace
 
 def isResponse(message):
 	msgType = message.msgType()
-	return msgType == msg_type.EXECUTION_REPORT.value \
-		or msgType == msg_type.ORDER_CANCEL_REJECT.value
+	return msgType == MsgType.EXECUTION_REPORT.value \
+		or msgType == MsgType.ORDER_CANCEL_REJECT.value
 
 
 def isRequest(message):
@@ -63,3 +63,26 @@ def createMessage(line):
 		return OrderCancelReplace(fields)
 	raise ValueError(f"Invalid msgType: {msgType}") 
 
+
+def asTSV(message):
+	return '	'.join(message.fields)
+
+
+def isExecutionReport(message):
+	return MsgType.EXECUTION_REPORT.value == message.msgType()
+
+
+def isOrderCancelReject(message):
+	return MsgType.ORDER_CANCEL_REJECT.value == message.msgType()
+
+
+def isNewSingleOrder(message):
+	return MsgType.NEW_ORDER_SINGLE.value == message.msgType()
+
+
+def isOrderCancel(message):
+	return MsgType.ORDER_CANCEL.value == message.msgType()
+
+
+def isOrderCancelReplace(message):
+	return MsgType.ORDER_CANCEL_REPLACE.value == message.msgType()

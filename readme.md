@@ -128,6 +128,10 @@ defined above.
 		- ClOrdID.1
 		- ClOrdID.2
 		- ClOrdID.3
+	+ order_id_map
+		- ClOrdID.1
+		- ClOrdID.2
+		- ClOrdID.3
 
 ### Queries
 

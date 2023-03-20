@@ -1,16 +1,12 @@
 #!/bin/bash
 
 
-readonly WORK_FOLDER='/mnt/c/temp/exchange'
+readonly WORK_FOLDER="/dev/shm/${USER}/exchange"
 readonly ORDER_BOOK="${WORK_FOLDER}/order-book"
-
-# Order book format
-# sell|price|buy
-# 0|90|0
-# 10|80|0
-# 1|70|0
-# 0|60|10
-# 0|50|20
+readonly CL_ORD_ID_MAP_FOLDER="${WORK_FOLDER}/cl_ord_id_map"
+readonly ORDER_ID_MAP_FOLDER="${WORK_FOLDER}/order_id_map"
+readonly ORDER_ID_MAP_FIFO="${WORK_FOLDER}/order_id_map_fifo"
+readonly CL_ORD_ID_MAP_FIFO="${WORK_FOLDER}/cl_ord_id_map_fifo"
 
 
 function get_field {
@@ -68,18 +64,6 @@ function consume_orders {
 }
 
 
-function generate_order {
-	awk '
-		BEGIN {
-			 for (;;) {
-				 print("1 2 3 4")
-				 fflush()
-			 }
-		}
-	'
-}
-
-
 function render_messages {
 	python3 -c '
 from src.message_util import asHumanTable
@@ -89,10 +73,50 @@ asHumanTable()
 }
 
 
+function generate_clOrdID_map {
+	python3 -c '
+from src.services.clOrdID_map_manager import generateClOrdIDMap
+generateClOrdIDMap()
+'
+}
 
+
+function generate_orderID_map {
+	python3 -c '
+from src.services.orderID_map_manager import generateOrderIDMap
+generateOrderIDMap()
+'
+}
+
+
+function save_map {
+	local folder="$1"
+	while read line; do
+		local key=$(echo $line | cut -f1 | base64)
+		local file="$folder/$key"
+		if ! [[ -f "$file" ]]; then
+			echo "$line" > $file
+		fi
+	done
+}
+
+
+function sort_message {
+	python3 -c '
+from src.services.message_sorter import sortMessages
+sortMessages()
+'
+}
+
+
+rm -rf $WORK_FOLDER
 mkdir -p $WORK_FOLDER
+mkdir -p $CL_ORD_ID_MAP_FOLDER
+mkdir -p $ORDER_ID_MAP_FOLDER
+mkfifo $CL_ORD_ID_MAP_FIFO
+mkfifo $ORDER_ID_MAP_FIFO
 
-while getopts "hlsdr" arg; do
+while getopts "hlsdrt" arg; do
   case $arg in
     h)
       echo "usage" 
@@ -112,6 +136,15 @@ while getopts "hlsdr" arg; do
 			;;
 		r)
 			render_messages
+			exit 0
+			;;
+		t)
+			$(cat $ORDER_ID_MAP_FIFO | generate_clOrdID_map | save_map "$CL_ORD_ID_MAP_FOLDER") &
+			$(cat $CL_ORD_ID_MAP_FIFO | generate_orderID_map | save_map "$ORDER_ID_MAP_FOLDER") &
+			tee $ORDER_ID_MAP_FIFO \
+				| tee $CL_ORD_ID_MAP_FIFO \
+				| sort_message \
+				| render_messages
 			exit 0
 			;;
 		*)
