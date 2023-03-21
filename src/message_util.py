@@ -86,3 +86,12 @@ def isOrderCancel(message):
 
 def isOrderCancelReplace(message):
 	return MsgType.ORDER_CANCEL_REPLACE.value == message.msgType()
+
+
+def consumeMessageStream(f):
+	for line in sys.stdin:
+		if len(line.strip()) == 0:
+			continue
+		message = createMessage(line.replace("\n", ""))
+		f(message)
+

@@ -109,6 +109,14 @@ sortMessages()
 }
 
 
+function generate_messages {
+	python3 -c '
+from src.services.message_generator import generateMessages
+generateMessages()
+'
+}
+
+
 rm -rf $WORK_FOLDER
 mkdir -p $WORK_FOLDER
 mkdir -p $CL_ORD_ID_MAP_FOLDER
@@ -116,7 +124,7 @@ mkdir -p $ORDER_ID_MAP_FOLDER
 mkfifo $CL_ORD_ID_MAP_FIFO
 mkfifo $ORDER_ID_MAP_FIFO
 
-while getopts "hlsdrt" arg; do
+while getopts "hlsdrtg" arg; do
   case $arg in
     h)
       echo "usage" 
@@ -145,6 +153,10 @@ while getopts "hlsdrt" arg; do
 				| tee $CL_ORD_ID_MAP_FIFO \
 				| sort_message \
 				| render_messages
+			exit 0
+			;;
+		g)
+			generate_messages
 			exit 0
 			;;
 		*)
