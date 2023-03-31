@@ -39,7 +39,7 @@ MsgType	OrderID	ClOrdID	OrigClOrdID	ExecID	ExecType	OrdStatus	Symbol	Side	Leaves
 
 Below we define the order cancel reject.
 ```
-MsgType	OrderID	ClOrdID	OrdStatus	TransactTime
+MsgType	OrderID	ClOrdID	OrigClOrdID	OrdStatus	TransactTime
 ```
 
 Below we define the new order single.
@@ -94,6 +94,7 @@ ExecType:
 	C = Expired
 	D = Restarted
 	E = Pending Replace
+
 
 ### Workflow
 

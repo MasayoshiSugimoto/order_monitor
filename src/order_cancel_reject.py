@@ -18,14 +18,18 @@ class OrderCancelReject:
 		return self.fields[2]
 
 
-	def ordStatus(self):
+	def origClOrdID(self):
 		return self.fields[3]
 
 
-	def transactTime(self):
+	def ordStatus(self):
 		return self.fields[4]
 
 
-	def firstClOrdID(self):
+	def transactTime(self):
 		return self.fields[5]
+
+
+	def firstClOrdID(self):
+		return self.fields[6]
 

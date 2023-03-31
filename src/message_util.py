@@ -95,3 +95,4 @@ def consumeMessageStream(f):
 		message = createMessage(line.replace("\n", ""))
 		f(message)
 
+
