@@ -1,0 +1,44 @@
+#!/bin/bash
+
+
+function usage {
+	cat << EOF
+FIX_RENDER
+==========
+
+Read fix messages from stdin and render in human readable format.
+
+
+Usage
+-----
+
+fix_render [OPTIONS]
+
+
+Options
+-------
+
+-h	Print this help message.
+EOF
+}
+
+
+function render_messages {
+	python3 -c '
+from src.message_util import asHumanTable
+asHumanTable()
+		' \
+		| column -t -s'	' 
+}
+
+
+while getopts "h" arg; do
+  case $arg in
+		h)
+			usage
+			exit 0
+			;;
+	esac
+done
+
+render_messages

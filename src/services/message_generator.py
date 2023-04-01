@@ -4,10 +4,11 @@ import random
 import string
 from src.message_util import *
 from enum import Enum
+from datetime import datetime  
 
 
 ID_LENGTH = 10
-NB_ORDERS = 10
+NB_ORDERS = 1
 
 
 def generateMessages():
@@ -39,7 +40,8 @@ def generateSide():
 
 
 def generateTransactTime():
-	return '19981231-23:59:59'
+    currentTime = datetime.now()
+    return currentTime.strftime("%Y%m%d-%H:%M:%S")
 
 
 def generateOrderQty():
@@ -218,8 +220,8 @@ class MessageGenerator:
 
 
 	def orderCancelReplace(self):
-		self.price = generatePrice()
-		self.totalQuantity = generateOrderQty()
+		price = generatePrice()
+		totalQuantity = generateOrderQty()
 		return OrderCancelReplace([
 			MsgType.ORDER_CANCEL_REPLACE.value,
 			self.lastSent.clOrdID(),
@@ -227,9 +229,9 @@ class MessageGenerator:
 			self.symbol,
 			self.side,
 			generateTransactTime(),
-			f'{self.totalQuantity}',
+			f'{totalQuantity}',
 			self.orderType,
-			f'{self.price}'
+			f'{price}'
 		])
 
 

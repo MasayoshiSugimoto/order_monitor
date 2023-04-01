@@ -1,0 +1,48 @@
+#!/bin/bash
+
+
+function usage {
+	cat << EOF
+FIX_GEN
+=======
+
+Generate random fix messages for testing.
+
+The generated messages are mostly correct and should generate valid orders.
+
+
+Usage
+-----
+
+fix_gen [OPTIONS]
+
+
+Options
+-------
+
+-h	Print this help message.
+EOF
+}
+
+
+function generate_messages {
+	python3 -c '
+from src.services.message_generator import generateMessages
+generateMessages()
+'
+}
+
+BIN_DIR=$(readlink --canonicalize $(dirname $BASH_SOURCE))
+BASE_DIR=$BIN_DIR/..
+cd $BASE_DIR
+
+while getopts "h" arg; do
+  case $arg in
+		h)
+			usage
+			exit 0
+			;;
+	esac
+done
+
+generate_messages
