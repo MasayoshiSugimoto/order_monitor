@@ -10,5 +10,5 @@ class OrdStatus(Enum):
     CANCELED = 4
     REPLACED = 5
     PENDING_CANCEL = 6
-    REJECTED = 7
+    REJECTED = 8
 

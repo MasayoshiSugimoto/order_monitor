@@ -75,6 +75,7 @@ tagWithFirstClOrdID()
 '
 }
 
+
 function save_map_old {
 	local folder="$1"
 	while read line; do
@@ -150,5 +151,5 @@ while getopts "h" arg; do
   esac
 done
 
-tag_messages
+tag_messages | sort_message | manage_orders
 #main

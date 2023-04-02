@@ -15,4 +15,16 @@ class Order:
         self.ordType = 0
         self.price = 0
 
-
+    
+    def asTSV(self):
+        return '	'.join([
+                self.orderID,
+                f'{self.ordStatus.value}',
+                self.symbol,
+                self.side.value,
+                f'{self.cumQty}',
+                f'{self.avgPx}',
+                f'{self.orderQty}',
+                f'{self.ordType}',
+                f'{self.price}'
+        ])

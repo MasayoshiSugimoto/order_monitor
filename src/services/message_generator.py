@@ -79,6 +79,12 @@ def randomRequestState():
 	])
 
 
+def numberAsString(n):
+    if n is None:
+        return ''
+    return f'{n}'
+
+
 class State(Enum):
 	NEW_ORDER_SINGLE = 1
 	NEW_ORDER_SINGLE_ACK = 2
@@ -214,7 +220,7 @@ class MessageGenerator:
 			self.side,
 			f'{self.leavesQty()}',
 			f'{self.cumQty}',
-			f'{self.avgPx()}',
+			numberAsString(self.avgPx()),
 			generateTransactTime()
 		])
 
@@ -258,7 +264,7 @@ class MessageGenerator:
 			self.side,
 			f'{self.leavesQty()}',
 			f'{self.cumQty}',
-			f'{self.avgPx()}',
+            numberAsString(self.avgPx()),
 			generateTransactTime()
 		])
 

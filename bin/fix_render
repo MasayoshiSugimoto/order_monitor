@@ -12,13 +12,20 @@ Read fix messages from stdin and render in human readable format.
 Usage
 -----
 
-fix_render [OPTIONS]
+Render fix messages:
+$ fix_render -m
+
+Render orders:
+$ fix_render -o
+
 
 
 Options
 -------
 
 -h	Print this help message.
+-m	Render fix messages in tabular format.
+-o	Render orders in tabular format.
 EOF
 }
 
@@ -32,13 +39,32 @@ asHumanTable()
 }
 
 
-while getopts "h" arg; do
+function render_orders {
+	(
+		echo 'OrderID	OrdStatus	Symbol	Side	CumQty	AvgPx	OrderQty	OrdType	Price'
+		sed -E 's/		/	NULL	/g' | sed -E 's/^	/NULL	/g'
+	) | column -t -s'	'
+}
+
+
+while getopts "hmo" arg; do
   case $arg in
+    m)
+      render_messages
+      exit 0
+      ;;
+    o)
+      render_orders
+      exit 0
+      ;;
 		h)
 			usage
 			exit 0
 			;;
+		*)
+			echo "ERROR: Wrong argument"
+			usage
+			exit 1
 	esac
 done
-
-render_messages
+usage
