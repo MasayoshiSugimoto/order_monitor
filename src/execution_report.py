@@ -1,9 +1,13 @@
+MAX_LENGTH = 14
+
 
 class ExecutionReport:
 
 
 	def __init__(self, fields):
 		self.fields = fields
+		while len(self.fields) < MAX_LENGTH:
+			self.fields.append('')
 
 
 	def msgType(self):
@@ -61,3 +65,6 @@ class ExecutionReport:
 	def firstClOrdID(self):
 		return self.fields[13]
 
+
+	def setFirstClOrdID(self, firstClOrdID):
+		self.fields[13] = firstClOrdID

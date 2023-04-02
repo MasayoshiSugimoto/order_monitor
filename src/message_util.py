@@ -23,7 +23,7 @@ def asHumanRow(message, header):
 
 
 def asHumanTable():
-	print("MsgType	OrderID	ClOrdID	OrigClOrdID	ExecID	ExecType	OrdStatus	Symbol	Side	LeavesQty	CumQty	AvgPx	TransactTime	OrderQty	OrdType	Price")
+	print("MsgType	OrderID	ClOrdID	OrigClOrdID	ExecID	ExecType	OrdStatus	Symbol	Side	LeavesQty	CumQty	AvgPx	TransactTime	OrderQty	OrdType	Price FirstClOrdID")
 	for line in sys.stdin:
 		if len(line.strip()) == 0:
 			continue
@@ -44,7 +44,8 @@ def asHumanTable():
 			"transactTime",
 			"orderQty",
 			"ordType",
-			"price"
+			"price",
+            "firstClOrdID"
 		])
 
 
@@ -90,9 +91,8 @@ def isOrderCancelReplace(message):
 
 def consumeMessageStream(f):
 	for line in sys.stdin:
-		if len(line.strip()) == 0:
+		line = line.strip()
+		if len(line) == 0:
 			continue
-		message = createMessage(line.replace("\n", ""))
+		message = createMessage(line)
 		f(message)
-
-

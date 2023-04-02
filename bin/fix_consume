@@ -1,0 +1,154 @@
+#!/bin/bash
+
+readonly BASE_FOLDER="/dev/shm"
+readonly WORK_FOLDER="${BASE_FOLDER}/${USER}/order_monitor"
+readonly CL_ORD_ID_MAP="${WORK_FOLDER}/cl_ord_id_map"
+readonly ORDER_ID_MAP="${WORK_FOLDER}/order_id_map"
+readonly ORDER_ID_MAP_FIFO="${WORK_FOLDER}/order_id_map_fifo"
+readonly CL_ORD_ID_MAP_FIFO="${WORK_FOLDER}/cl_ord_id_map_fifo"
+
+
+function usage {
+	cat << EOF
+FIX_CONSUME
+===========
+
+Consume a stream of fix messages in tsv format, reorder them and create
+a database of orders and metadata in ${WORK_FOLDER}.
+
+
+Usage
+-----
+
+fix_consume [OPTIONS]
+
+
+Options
+-------
+
+-h	Print this help message.
+EOF
+}
+
+
+function get_field {
+    local field_number=$1
+    cut -d'|' -f${field_number}
+}
+
+
+function fatal {
+    local text="$1"
+    echo "ERROR: $text"
+    exit 1
+}
+
+
+function generate_clOrdID_map {
+	python3 -c '
+from src.services.clOrdID_map_manager import generateClOrdIDMap
+generateClOrdIDMap()
+'
+}
+
+
+function generate_orderID_map {
+	python3 -c '
+from src.services.orderID_map_manager import generateOrderIDMap
+generateOrderIDMap()
+'
+}
+
+
+function manage_orders {
+  python3 -c '
+from src.services.order_manager import manageOrder
+manageOrder()
+'
+}
+
+
+function tag_messages {
+  python3 -c '
+from src.services.first_cl_ord_id_tagger import tagWithFirstClOrdID
+tagWithFirstClOrdID()
+'
+}
+
+function save_map_old {
+	local folder="$1"
+	while read line; do
+		local key=$(echo $line | cut -f1 | base64)
+		local file="$folder/$key"
+		if ! [[ -f "$file" ]]; then
+			echo "$line" > $file
+		fi
+	done
+}
+
+
+function save_map {
+	local folder="$1"
+	python3 -c "
+import sys
+import base64
+
+for line in sys.stdin:
+	line = line.strip()
+	if len(line) == 0:
+		continue
+	fields = line.split('	')	
+	key = fields[0]
+	value = fields[1]
+	fileName = str(base64.b64encode(str.encode(key)), 'ascii')
+	with open(f'${folder}/{fileName}', 'w') as file:
+		file.write(f'{key} {value}')
+"
+}
+
+
+function sort_message {
+	python3 -c '
+from src.services.message_sorter import sortMessages
+sortMessages()
+'
+}
+
+
+function generate_messages {
+	python3 -c '
+from src.services.message_generator import generateMessages
+generateMessages()
+'
+}
+
+
+function main {
+	rm -rf $WORK_FOLDER
+	mkdir -p $WORK_FOLDER
+	mkfifo $CL_ORD_ID_MAP_FIFO
+	mkfifo $ORDER_ID_MAP_FIFO
+
+  $(cat $ORDER_ID_MAP_FIFO | generate_clOrdID_map >> $CL_ORD_ID_MAP) &
+	$(cat $CL_ORD_ID_MAP_FIFO | generate_orderID_map >> $ORDER_ID_MAP) &
+	tee $ORDER_ID_MAP_FIFO \
+		| tee $CL_ORD_ID_MAP_FIFO \
+		| sort_message
+}
+
+
+while getopts "h" arg; do
+  case $arg in
+    h)
+			usage
+			exit 0
+      ;;
+		*)
+			echo "ERROR: Bad arguments."
+			usage
+			exit 1
+  esac
+done
+
+tag_messages
+#main

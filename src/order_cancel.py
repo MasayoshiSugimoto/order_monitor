@@ -1,9 +1,13 @@
+MAX_LENGTH = 7
+
 
 class OrderCancel:
 
 
 	def __init__(self, fields):
 		self.fields = fields
+		while len(self.fields) < MAX_LENGTH:
+			self.fields.append('')
 
 
 	def msgType(self):
@@ -33,3 +37,6 @@ class OrderCancel:
 	def firstClOrdID(self):
 		return self.fields[6]
 
+
+	def setFirstClOrdID(self, firstClOrdID):
+		self.fields[6] = firstClOrdID

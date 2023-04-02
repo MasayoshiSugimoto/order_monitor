@@ -1,8 +1,12 @@
+MAX_LENGTH = 9
+
 
 class NewOrderSingle:
 
 	def __init__(self, fields):
 		self.fields = fields
+		while len(self.fields) < MAX_LENGTH:
+			self.fields.append('')
 
 
 	def msgType(self):
@@ -39,3 +43,8 @@ class NewOrderSingle:
 
 	def firstClOrdID(self):
 		return self.fields[8]
+
+
+	def setFirstClOrdID(self, firstClOrdID):
+		self.fields[8] = firstClOrdID
+

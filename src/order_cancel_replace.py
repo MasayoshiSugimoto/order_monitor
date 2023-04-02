@@ -1,9 +1,13 @@
+MAX_LENGTH = 10
+
 
 class OrderCancelReplace:
 
 
 	def __init__(self, fields):
 		self.fields = fields
+		while len(self.fields) < MAX_LENGTH:
+			self.fields.append('')
 
 
 	def msgType(self):
@@ -45,3 +49,6 @@ class OrderCancelReplace:
 	def firstClOrdID(self):
 		return self.fields[9]
 
+
+	def setFirstClOrdID(self, firstClOrdID):
+		self.fields[9] = firstClOrdID

@@ -21,28 +21,31 @@ Options
 -------
 
 -h	Print this help message.
+-n	Generate messages for N orders. Following value is an integer.
 EOF
 }
 
 
 function generate_messages {
-	python3 -c '
+	python3 -c "
 from src.services.message_generator import generateMessages
-generateMessages()
-'
+generateMessages(${NB_ORDERS})
+"
 }
 
 BIN_DIR=$(readlink --canonicalize $(dirname $BASH_SOURCE))
 BASE_DIR=$BIN_DIR/..
 cd $BASE_DIR
 
-while getopts "h" arg; do
+while getopts "hn:" arg; do
   case $arg in
 		h)
 			usage
 			exit 0
 			;;
+		n)
+			NB_ORDERS=$OPTARG
 	esac
 done
 
-generate_messages
+generate_messages 

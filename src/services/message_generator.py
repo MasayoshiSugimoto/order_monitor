@@ -8,11 +8,11 @@ from datetime import datetime
 
 
 ID_LENGTH = 10
-NB_ORDERS = 1
+NB_ORDERS = 10
 
 
-def generateMessages():
-	for i in range(NB_ORDERS):
+def generateMessages(nbOrders = NB_ORDERS):
+	for i in range(nbOrders):
 		generator = MessageGenerator()
 		while True:
 			nextMessage = generator.next()
@@ -40,8 +40,8 @@ def generateSide():
 
 
 def generateTransactTime():
-    currentTime = datetime.now()
-    return currentTime.strftime("%Y%m%d-%H:%M:%S")
+	currentTime = datetime.now()
+	return currentTime.strftime("%Y%m%d-%H:%M:%S")
 
 
 def generateOrderQty():

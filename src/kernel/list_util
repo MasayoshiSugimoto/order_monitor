@@ -1,0 +1,4 @@
+
+def reshapeList(l, length):
+	while len(l) < length:
+		l.append('')
