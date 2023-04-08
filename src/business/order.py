@@ -9,9 +9,9 @@ class Order:
         self.ordStatus = OrdStatus.NONE
         self.symbol = ''
         self.side = Side.NONE
+        self.orderQty = 0
         self.cumQty = 0
         self.avgPx = 0
-        self.orderQty = 0
         self.ordType = 0
         self.price = 0
 
@@ -22,9 +22,9 @@ class Order:
                 f'{self.ordStatus.value}',
                 self.symbol,
                 self.side.value,
+                f'{self.orderQty}',
                 f'{self.cumQty}',
                 f'{self.avgPx}',
-                f'{self.orderQty}',
                 f'{self.ordType}',
                 f'{self.price}'
         ])

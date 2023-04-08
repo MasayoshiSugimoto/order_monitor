@@ -41,7 +41,7 @@ asHumanTable()
 
 function render_orders {
 	(
-		echo 'OrderID	OrdStatus	Symbol	Side	CumQty	AvgPx	OrderQty	OrdType	Price'
+		echo 'OrderID	OrdStatus	Symbol	Side	OrderQty	CumQty	AvgPx	OrdType	Price'
 		sed -E 's/		/	NULL	/g' | sed -E 's/^	/NULL	/g'
 	) | column -t -s'	'
 }

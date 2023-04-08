@@ -242,15 +242,15 @@ class MessageGenerator:
 
 
 	def cancelReplaceAck(self):
+		self.totalQuantity = int(self.pending.orderQty())
+		self.price = int(self.pending.price())
+
 		if self.leavesQty() == 0:
 			ordStatus = '2'
 		elif self.cumQty > 0:
 			ordStatus = '1'
 		else:
 			ordStatus = '5'
-
-		self.totalQuantity = int(self.pending.orderQty())
-		self.price = int(self.pending.price())
 
 		return ExecutionReport([
 			MsgType.EXECUTION_REPORT.value,
